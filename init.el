@@ -1,27 +1,31 @@
-(setq inhibit-startup-screen t)
+(setq straight-use-package-by-default t) ;; have use-package use straight.el by default.
 
-(setq straight-use-package-by-default t)
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
+      (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(straight-use-package 'use-package)
+(straight-use-package 'use-package) ;; install use-package via straight
 
-;; Dirvish
-(straight-use-package 'dirvish)
-(dirvish-override-dired-mode)
-;;
+(use-package all-the-icons)
+(use-package all-the-icons-dired
+  :hook
+  (dired-mode . all-the-icons-dired-mode))
+(use-package dired
+  :straight (:type built-in)
+  :hook
+  (dired-mode . dired-hide-details-mode)
+  )
+(dired ".")
 
-;;Electric
 (use-package electric
   :straight (:type built-in)
   :init
@@ -45,25 +49,9 @@
 (straight-use-package 'tree-sitter)
 (straight-use-package 'tree-sitter-langs)
 (straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (XXX-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
-(straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28"))
-(setq tsx-mode t)
 
 ;; see the world burn
 (use-package vscode-dark-plus-theme
   :ensure t
   :config
   (load-theme 'vscode-dark-plus t))
-
-
-
-(dirvish-override-dired-mode)
-(dirvish ".")
